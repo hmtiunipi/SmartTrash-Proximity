@@ -2,32 +2,28 @@
 #include <LiquidCrystal_I2C.h>
 #include <Servo.h>
 
-// LCD dan Servo
-LiquidCrystal_I2C lcd(0x27, 16, 2); // coba ganti ke 0x3F kalau tidak tampil
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 Servo servo;
 
-// Pin
 const int proximityPin = 2;
 const int servoPin = 9;
 
-// Status
 enum State {SIAP, TERBUKA, TERTUTUP};
 State status = SIAP;
 
-const unsigned long jedaBuka = 2000;       // lama penutup tetap terbuka (ms)
+const unsigned long jedaBuka = 2000;
 unsigned long waktuMulaiTerbuka = 0;
 
 void setup() {
   Serial.begin(9600);
   delay(200);
 
-  // Inisialisasi LCD
-  lcd.init();          // atau ganti lcd.begin(16,2); kalau masih error
+  lcd.init();
   lcd.backlight();
   delay(100);
 
   servo.attach(servoPin);
-  servo.write(0);  // Posisi awal tertutup
+  servo.write(0);
   delay(300);
 
   pinMode(proximityPin, INPUT);
@@ -40,7 +36,7 @@ void loop() {
 
   switch (status) {
     case SIAP:
-      if (sensor == LOW) {   // sensor aktif (tergantung logika HIGH/LOW sensor)
+      if (sensor == LOW) {
         bukaPenutup();
         status = TERBUKA;
         waktuMulaiTerbuka = millis();
@@ -75,7 +71,7 @@ void tampilkanSiap() {
 
 void bukaPenutup() {
   Serial.println("Sampah terdeteksi >> Penutup Terbuka");
-  servo.write(120); // posisi buka
+  servo.write(120);
   delay(500);
 
   lcd.clear();
@@ -86,7 +82,7 @@ void bukaPenutup() {
 
 void tutupPenutup() {
   Serial.println("Menutup kembali...");
-  servo.write(0); // posisi tutup
+  servo.write(0);
   delay(500);
 
   lcd.clear();
@@ -94,3 +90,4 @@ void tutupPenutup() {
   lcd.setCursor(0, 0);
   lcd.print("Penutup Tertutup");
 }
+
